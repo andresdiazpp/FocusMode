@@ -18,12 +18,25 @@ final class HelperClient {
     // macOS muestra un diálogo pidiendo la contraseña del administrador.
     // Funciona con Apple ID gratis (Personal Team) — no requiere $99/año.
     func installHelperIfNeeded() throws {
-        // Primero verificamos si el helper ya está instalado y actualizado
-        let helperURL = URL(fileURLWithPath: "/Library/PrivilegedHelperTools/com.andresdiazpp.focusmode.helper")
-        if FileManager.default.fileExists(atPath: helperURL.path) {
-            // Ya instalado — verificar que la versión coincide con la del bundle
-            // (por ahora asumimos que está actualizado)
+        let installedURL = URL(fileURLWithPath: "/Library/PrivilegedHelperTools/com.andresdiazpp.focusmode.helper")
+
+        // Buscamos el helper dentro del bundle de la app
+        guard let bundledURL = Bundle.main.url(
+            forAuxiliaryExecutable: "com.andresdiazpp.focusmode.helper"
+        ) else {
+            // Si el helper no está en el bundle, no podemos hacer nada
             return
+        }
+
+        // Si el helper está instalado, comparamos el tamaño del archivo.
+        // Si el bundled es diferente al instalado, hay una versión nueva — reinstalar.
+        if FileManager.default.fileExists(atPath: installedURL.path) {
+            let installedSize = (try? FileManager.default.attributesOfItem(atPath: installedURL.path)[.size] as? Int) ?? 0
+            let bundledSize   = (try? FileManager.default.attributesOfItem(atPath: bundledURL.path)[.size] as? Int) ?? 0
+            if installedSize == bundledSize {
+                return  // misma versión — no hay nada que hacer
+            }
+            // tamaños distintos — caemos al bloque de instalación abajo
         }
 
         // Crear la autorización con el derecho de instalar helpers privilegiados.

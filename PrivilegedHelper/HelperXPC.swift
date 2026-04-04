@@ -170,13 +170,16 @@ final class HelperXPC: NSObject, HelperProtocol {
     // MARK: - pf Firewall
 
     // Ruta del archivo de reglas que FocusMode escribe
-    private let pfAnchorPath = "/etc/pf.anchors/focusmode"
-    // Nombre del anchor dentro de pf
-    private let pfAnchorName = "focusmode"
+    private let pfAnchorPath  = "/etc/pf.anchors/focusmode"
+    // Nombre del anchor en pf — tiene que coincidir con el que se usa en pf.conf
+    private let pfAnchorName  = "focusmode"
     // Línea que FocusMode agrega a /etc/pf.conf para cargar sus reglas
-    private let pfAnchorLine = "anchor \"focusmode\""
-    private let pfLoadLine   = "load anchor \"focusmode\" from \"/etc/pf.anchors/focusmode\""
-    private let pfConfPath   = "/etc/pf.conf"
+    private let pfAnchorLine  = "anchor \"focusmode\""
+    private let pfLoadLine    = "load anchor \"focusmode\" from \"/etc/pf.anchors/focusmode\""
+    private let pfConfPath    = "/etc/pf.conf"
+    // Launchd daemon que recarga pf al arrancar el Mac
+    private let pfLaunchdPath = "/Library/LaunchDaemons/com.andresdiazpp.focusmode.firewall.plist"
+    private let pfLaunchdLabel = "com.andresdiazpp.focusmode.firewall"
 
     func applyFirewallBlock(domains: [String], reply: @escaping (Error?) -> Void) {
         do {
@@ -201,15 +204,18 @@ final class HelperXPC: NSObject, HelperProtocol {
                 ]
             }.joined(separator: "\n")
 
-            // Escribir el archivo de anchor
-            try rules.write(toFile: pfAnchorPath, atomically: true, encoding: .utf8)
+            // Escribir el archivo de anchor — con newline al final para que pfctl lo parsee bien
+            try (rules + "\n").write(toFile: pfAnchorPath, atomically: true, encoding: .utf8)
 
             // Asegurarse que pf.conf incluye nuestro anchor
             try injectAnchorIntoPFConf()
 
-            // Activar pf y recargar las reglas
-            try runPFCtl(["-e"])                        // activa el firewall
-            try runPFCtl(["-f", pfConfPath])            // recarga reglas
+            // Activar pf y recargar las reglas ahora
+            try runPFCtl(["-e"])             // activa el firewall
+            try runPFCtl(["-f", pfConfPath]) // carga las reglas
+
+            // Instalar el daemon de launchd para que las reglas persistan al reiniciar
+            try installPFLaunchDaemon()
 
             reply(nil)
         } catch {
@@ -219,7 +225,11 @@ final class HelperXPC: NSObject, HelperProtocol {
 
     func removeFirewallBlock(reply: @escaping (Error?) -> Void) {
         do {
-            // Vaciar el archivo de anchor — sin IPs, pf no bloquea nada
+            // Limpiar las reglas del anchor en memoria — vaciar el archivo no es suficiente
+            // pfctl -a focusmode -F rules borra las reglas activas inmediatamente
+            _ = try? runPFCtl(["-a", pfAnchorName, "-F", "rules"])
+
+            // Vaciar el archivo de anchor para que no se recargue
             try "".write(toFile: pfAnchorPath, atomically: true, encoding: .utf8)
 
             // Recargar pf para que aplique el archivo vacío
@@ -227,6 +237,9 @@ final class HelperXPC: NSObject, HelperProtocol {
 
             // Eliminar las líneas de FocusMode de pf.conf
             try removeAnchorFromPFConf()
+
+            // Quitar el daemon de launchd — sin esto, volvería a activarse al reiniciar
+            try uninstallPFLaunchDaemon()
 
             reply(nil)
         } catch {
@@ -273,6 +286,68 @@ final class HelperXPC: NSObject, HelperProtocol {
         return ips
     }
 
+    // Escribe el plist de launchd y lo carga para que pf arranque al reiniciar
+    private func installPFLaunchDaemon() throws {
+        // El plist le dice a launchd:
+        // - Arrancar este job al prender el Mac (RunAtLoad)
+        // - Ejecutar pfctl para activar pf y cargar nuestras reglas
+        let plist = """
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+        <plist version="1.0">
+        <dict>
+            <key>Label</key>
+            <string>\(pfLaunchdLabel)</string>
+            <key>ProgramArguments</key>
+            <array>
+                <string>/sbin/pfctl</string>
+                <string>-e</string>
+                <string>-f</string>
+                <string>/etc/pf.conf</string>
+            </array>
+            <key>RunAtLoad</key>
+            <true/>
+        </dict>
+        </plist>
+        """
+
+        // Escribir el plist en LaunchDaemons (requiere root)
+        try plist.write(toFile: pfLaunchdPath, atomically: true, encoding: .utf8)
+
+        // Cargar el daemon ahora mismo sin necesidad de reiniciar
+        // Si ya estaba cargado, primero lo descargamos para evitar error
+        _ = try? runLaunchCtl(["unload", pfLaunchdPath])
+        try runLaunchCtl(["load", "-w", pfLaunchdPath])
+    }
+
+    // Descarga y borra el plist de launchd
+    private func uninstallPFLaunchDaemon() throws {
+        guard FileManager.default.fileExists(atPath: pfLaunchdPath) else { return }
+
+        // Descargar el daemon — le dice a launchd que ya no existe
+        _ = try? runLaunchCtl(["unload", pfLaunchdPath])
+
+        // Borrar el archivo — si no, launchd lo volvería a cargar al reiniciar
+        try FileManager.default.removeItem(atPath: pfLaunchdPath)
+    }
+
+    // Ejecuta launchctl con los argumentos dados
+    @discardableResult
+    private func runLaunchCtl(_ args: [String]) throws -> String {
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/bin/launchctl")
+        process.arguments = args
+
+        let pipe = Pipe()
+        process.standardOutput = pipe
+        process.standardError  = pipe
+
+        try process.run()
+        process.waitUntilExit()
+
+        return String(data: pipe.fileHandleForReading.readDataToEndOfFile(), encoding: .utf8) ?? ""
+    }
+
     // Agrega las líneas del anchor a /etc/pf.conf si no están ya
     private func injectAnchorIntoPFConf() throws {
         var conf = try String(contentsOfFile: pfConfPath, encoding: .utf8)
@@ -280,8 +355,11 @@ final class HelperXPC: NSObject, HelperProtocol {
         // Si ya están las líneas, no hacemos nada
         guard !conf.contains(pfAnchorLine) else { return }
 
-        // Agregamos al final del archivo
-        conf += "\n# FocusMode firewall anchor\n\(pfAnchorLine)\n\(pfLoadLine)\n"
+        // Limpiar líneas en blanco del final para no acumular saltos
+        conf = conf.replacingOccurrences(of: "\\s+$", with: "", options: .regularExpression)
+
+        // Agregar el bloque con una línea en blanco de separación y newline final
+        conf += "\n\n# FocusMode firewall anchor\n\(pfAnchorLine)\n\(pfLoadLine)\n"
         try conf.write(toFile: pfConfPath, atomically: true, encoding: .utf8)
     }
 
@@ -296,8 +374,11 @@ final class HelperXPC: NSObject, HelperProtocol {
             !line.contains(pfAnchorLine) &&
             !line.contains(pfLoadLine)
         }
-        conf = filtered.joined(separator: "\n")
-        try conf.write(toFile: pfConfPath, atomically: true, encoding: .utf8)
+        // Eliminar líneas en blanco acumuladas al final y asegurar newline final
+        var result = filtered.joined(separator: "\n")
+        result = result.replacingOccurrences(of: "\\s+$", with: "", options: .regularExpression)
+        result += "\n"
+        try result.write(toFile: pfConfPath, atomically: true, encoding: .utf8)
     }
 
     // Ejecuta pfctl con los argumentos dados
