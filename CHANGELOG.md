@@ -4,6 +4,25 @@ Registro de lo que se construyó en cada paso y por qué se tomaron las decision
 
 ---
 
+## Paso 10 — AppMonitor real: cierra apps bloqueadas via NSWorkspace (2026-04-04)
+
+### Qué se construyó
+- `AppMonitor.swift`: implementa `AppMonitoring`, escucha `NSWorkspace.didLaunchApplicationNotification`
+- Al recibir la notificación, busca el bundle ID de la app en el `Set` de bloqueadas
+- Si está bloqueada, llama `forceTerminate()` — equivalente a Force Quit
+- `stopMonitoring()` quita el observer de NSWorkspace y limpia el estado
+- `StubAppMonitor.swift` eliminado
+- `FocusModeApp` y preview de `HomeView` usan `AppMonitor()` en lugar del stub
+
+### Verificado
+- Check: agregar una app a la lista de bloqueo, iniciar sesión, abrir esa app → se cierra sola
+
+### Decisiones tomadas
+- **No necesita XPC**: `NSWorkspace` y `NSRunningApplication.forceTerminate()` corren en el proceso principal, sin root
+- **Set en vez de Array**: búsqueda O(1) por bundle ID — la notificación puede dispararse muchas veces por segundo
+
+---
+
 ## Paso 9 — DNSManager real: cambia DNS a CleanBrowsing via XPC (2026-04-04)
 
 ### Qué se construyó

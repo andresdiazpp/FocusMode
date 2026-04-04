@@ -163,7 +163,7 @@ struct HomeView: View {
                 blockEngine: BlockEngine(
                     hostsManager: HostsManager(client: HelperClient()),
                     dnsManager: DNSManager(helper: HelperClient()),
-                    appMonitor: StubAppMonitor(),
+                    appMonitor: AppMonitor(),
                     blocklistFetcher: BlocklistFetcher()
                 )
             ))

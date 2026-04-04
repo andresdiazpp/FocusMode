@@ -26,7 +26,7 @@ struct FocusModeApp: App {
 
         // 2b. DNSManager real — mismo helperClient, cambia el DNS via XPC
         let dnsManager = DNSManager(helper: helperClient)
-        let appMonitor = StubAppMonitor()
+        let appMonitor = AppMonitor()
 
         // 3. BlocklistFetcher — descarga y cachea la blocklist de porn
         let blocklistFetcher = BlocklistFetcher()
