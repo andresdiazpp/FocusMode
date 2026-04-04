@@ -12,6 +12,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // Trae la app al frente y centra la ventana al abrir
         NSApp.activate(ignoringOtherApps: true)
         NSApp.windows.first?.center()
+
     }
 
     // Verifica si la app tiene permiso de Accessibility.

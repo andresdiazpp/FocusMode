@@ -6,19 +6,101 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		E2671C4B2F8175B600FBCB8E /* com.andresdiazpp.focusmode.helper in CopyFiles */ = {isa = PBXBuildFile; fileRef = E2671C332F81729C00FBCB8E /* com.andresdiazpp.focusmode.helper */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		E2671C422F81744900FBCB8E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E2930AC02F8159CF00EC439C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E2671C322F81729C00FBCB8E;
+			remoteInfo = PrivilegedHelper;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		E2671C312F81729C00FBCB8E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+		E2671C442F8174A600FBCB8E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/Library/LaunchServices;
+			dstSubfolderSpec = 1;
+			files = (
+				E2671C4B2F8175B600FBCB8E /* com.andresdiazpp.focusmode.helper in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E2671C4C2F8175D100FBCB8E /* Copy Files */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/Library/LaunchDaemons;
+			dstSubfolderSpec = 1;
+			files = (
+			);
+			name = "Copy Files";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		E2671C332F81729C00FBCB8E /* com.andresdiazpp.focusmode.helper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = com.andresdiazpp.focusmode.helper; sourceTree = BUILT_PRODUCTS_DIR; };
 		E2930AC82F8159CF00EC439C /* FocusMode.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FocusMode.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		E2671C4E2F8175E200FBCB8E /* Exceptions for "PrivilegedHelper" folder in "Copy Files" phase from "FocusMode" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = E2671C4C2F8175D100FBCB8E /* Copy Files */;
+			membershipExceptions = (
+				com.andresdiazpp.focusmode.helper.plist,
+			);
+		};
+		E2930AEE2F9200000000AAAA /* Exceptions for "FocusMode" folder in "Copy Bundle Resources" phase from "FocusMode" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			buildPhase = E2930AC62F8159CF00EC439C /* Resources */;
+			membershipExceptions = (
+				FocusMode.entitlements,
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		E2671C342F81729C00FBCB8E /* PrivilegedHelper */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				E2671C4E2F8175E200FBCB8E /* Exceptions for "PrivilegedHelper" folder in "Copy Files" phase from "FocusMode" target */,
+			);
+			path = PrivilegedHelper;
+			sourceTree = "<group>";
+		};
 		E2930ACA2F8159CF00EC439C /* FocusMode */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				E2930AEE2F9200000000AAAA /* Exceptions for "FocusMode" folder in "Copy Bundle Resources" phase from "FocusMode" target */,
+			);
 			path = FocusMode;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		E2671C302F81729C00FBCB8E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E2930AC52F8159CF00EC439C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -33,6 +115,7 @@
 			isa = PBXGroup;
 			children = (
 				E2930ACA2F8159CF00EC439C /* FocusMode */,
+				E2671C342F81729C00FBCB8E /* PrivilegedHelper */,
 				E2930AC92F8159CF00EC439C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,6 +124,7 @@
 			isa = PBXGroup;
 			children = (
 				E2930AC82F8159CF00EC439C /* FocusMode.app */,
+				E2671C332F81729C00FBCB8E /* com.andresdiazpp.focusmode.helper */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -48,6 +132,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		E2671C322F81729C00FBCB8E /* PrivilegedHelper */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E2671C372F81729C00FBCB8E /* Build configuration list for PBXNativeTarget "PrivilegedHelper" */;
+			buildPhases = (
+				E2671C2F2F81729C00FBCB8E /* Sources */,
+				E2671C302F81729C00FBCB8E /* Frameworks */,
+				E2671C312F81729C00FBCB8E /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				E2671C342F81729C00FBCB8E /* PrivilegedHelper */,
+			);
+			name = PrivilegedHelper;
+			packageProductDependencies = (
+			);
+			productName = PrivilegedHelper;
+			productReference = E2671C332F81729C00FBCB8E /* com.andresdiazpp.focusmode.helper */;
+			productType = "com.apple.product-type.tool";
+		};
 		E2930AC72F8159CF00EC439C /* FocusMode */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = E2930AD32F8159D100EC439C /* Build configuration list for PBXNativeTarget "FocusMode" */;
@@ -55,10 +161,13 @@
 				E2930AC42F8159CF00EC439C /* Sources */,
 				E2930AC52F8159CF00EC439C /* Frameworks */,
 				E2930AC62F8159CF00EC439C /* Resources */,
+				E2671C442F8174A600FBCB8E /* CopyFiles */,
+				E2671C4C2F8175D100FBCB8E /* Copy Files */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				E2671C432F81744900FBCB8E /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				E2930ACA2F8159CF00EC439C /* FocusMode */,
@@ -80,6 +189,9 @@
 				LastSwiftUpdateCheck = 2640;
 				LastUpgradeCheck = 2640;
 				TargetAttributes = {
+					E2671C322F81729C00FBCB8E = {
+						CreatedOnToolsVersion = 26.4;
+					};
 					E2930AC72F8159CF00EC439C = {
 						CreatedOnToolsVersion = 26.4;
 					};
@@ -100,6 +212,7 @@
 			projectRoot = "";
 			targets = (
 				E2930AC72F8159CF00EC439C /* FocusMode */,
+				E2671C322F81729C00FBCB8E /* PrivilegedHelper */,
 			);
 		};
 /* End PBXProject section */
@@ -115,6 +228,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		E2671C2F2F81729C00FBCB8E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E2930AC42F8159CF00EC439C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -124,7 +244,73 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		E2671C432F81744900FBCB8E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E2671C322F81729C00FBCB8E /* PrivilegedHelper */;
+			targetProxy = E2671C422F81744900FBCB8E /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		E2671C382F81729C00FBCB8E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = PrivilegedHelper/PrivilegedHelper.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Config/PrivilegedHelper-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 26.4;
+				OTHER_LDFLAGS = (
+					"-sectcreate",
+					__TEXT,
+					__info_plist,
+					"Config/PrivilegedHelper-Info.plist",
+					"-sectcreate",
+					__TEXT,
+					__launchd_plist,
+					PrivilegedHelper/com.andresdiazpp.focusmode.helper.plist,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.andresdiazpp.focusmode.helper;
+				PRODUCT_NAME = com.andresdiazpp.focusmode.helper;
+				SDKROOT = macosx;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		E2671C392F81729C00FBCB8E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = PrivilegedHelper/PrivilegedHelper.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Config/PrivilegedHelper-Info.plist";
+				MACOSX_DEPLOYMENT_TARGET = 26.4;
+				OTHER_LDFLAGS = (
+					"-sectcreate",
+					__TEXT,
+					__info_plist,
+					"Config/PrivilegedHelper-Info.plist",
+					"-sectcreate",
+					__TEXT,
+					__launchd_plist,
+					PrivilegedHelper/com.andresdiazpp.focusmode.helper.plist,
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.andresdiazpp.focusmode.helper;
+				PRODUCT_NAME = com.andresdiazpp.focusmode.helper;
+				SDKROOT = macosx;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 		E2930AD12F8159D100EC439C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -244,12 +430,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = FocusMode/FocusMode.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				ENABLE_APP_SANDBOX = YES;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_APP_SANDBOX = NO;
 				ENABLE_PREVIEWS = YES;
-				ENABLE_USER_SELECTED_FILES = readonly;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Config/FocusMode-Info.plist";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -286,12 +474,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = FocusMode/FocusMode.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				ENABLE_APP_SANDBOX = YES;
+				DEVELOPMENT_TEAM = "";
+				ENABLE_APP_SANDBOX = NO;
 				ENABLE_PREVIEWS = YES;
-				ENABLE_USER_SELECTED_FILES = readonly;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Config/FocusMode-Info.plist";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -326,6 +516,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		E2671C372F81729C00FBCB8E /* Build configuration list for PBXNativeTarget "PrivilegedHelper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E2671C382F81729C00FBCB8E /* Debug */,
+				E2671C392F81729C00FBCB8E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		E2930AC32F8159CF00EC439C /* Build configuration list for PBXProject "FocusMode" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
