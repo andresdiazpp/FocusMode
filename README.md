@@ -10,6 +10,7 @@ App de macOS que bloquea distracciones. En desarrollo activo.
 - PrivilegedHelper: proceso separado que corre como root para operaciones de sistema
 - HostsManager real: delega el bloqueo de hosts al helper via XPC
 - Helper se instala automáticamente al primer arranque (autorización de macOS una sola vez)
+- BlocklistFetcher: descarga la blocklist de StevenBlack (porn) y la persiste en Application Support
 
 ## Arquitectura
 

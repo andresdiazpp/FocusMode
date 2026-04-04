@@ -4,6 +4,21 @@ Registro de lo que se construyó en cada paso y por qué se tomaron las decision
 
 ---
 
+## Paso 8.1 — BlocklistFetcher: descarga y persiste una blocklist (2026-04-04)
+
+### Qué se construyó
+- `BlocklistFetcher.swift` en `Data/Persistence/`: descarga la blocklist de StevenBlack (variante solo-porn), parsea el archivo hosts, y guarda los dominios en `Application Support/FocusMode/blocklist_stevenblack.txt`
+- `fetchAndPersist()`: método async que descarga, parsea y escribe en disco — devuelve el array de dominios
+- `loadCached()`: lee la lista ya guardada en disco sin hacer red
+- `parse(_:)`: función pura que extrae dominios de líneas `0.0.0.0 dominio.com`, descartando comentarios y la entrada del propio `0.0.0.0`
+
+### Decisiones tomadas
+- **Variante porn de StevenBlack**: la URL apunta a `alternates/porn/hosts`, no a la lista completa — así solo se bloquea pornografía, no trackers ni malware que no son el foco de la app
+- **Un dominio por línea en caché**: formato simple de texto plano, fácil de leer y de combinar con otras listas en el paso 8.2
+- **`parse` es estática y pura**: sin dependencias externas, fácil de testear con cualquier string de input
+
+---
+
 ## Paso 7 — HostsManager real + instalación del helper (2026-04-04)
 
 ### Qué se construyó
