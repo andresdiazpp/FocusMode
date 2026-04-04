@@ -1,5 +1,29 @@
 # Changelog
 
+---
+
+## Paso 11 — pf firewall: bloqueo a nivel de red, persiste tras reinicios (2026-04-04)
+
+### Qué se construyó
+- `HelperXPC`: dos métodos nuevos — `applyFirewallBlock(domains:)` y `removeFirewallBlock()`
+- `applyFirewallBlock`: resuelve los dominios del usuario a IPs via DNS, escribe reglas en `/etc/pf.anchors/focusmode`, inyecta el anchor en `/etc/pf.conf`, activa pf con `pfctl`
+- `removeFirewallBlock`: flushea las reglas en memoria (`pfctl -a focusmode -F rules`), vacía el archivo de anchor, limpia `pf.conf`, borra el daemon de launchd
+- Launchd daemon en `/Library/LaunchDaemons/com.andresdiazpp.focusmode.firewall.plist`: se escribe al activar, le dice a macOS que recargue las reglas pf al reiniciar
+- `HelperClient`: wrappers async para los dos métodos nuevos
+- `BlockEngine`: llama `applyFirewallBlock` al activar y `removeFirewallBlock` al desactivar
+- `HelperClient.installHelperIfNeeded()`: ahora compara tamaño del archivo instalado vs. del bundle — reinstala si son distintos
+
+### Verificado
+- Sesión activa → `sudo pfctl -a focusmode -sr` muestra reglas con las IPs de los dominios bloqueados
+- Sesión terminada → anchor vacío, sin reglas en memoria
+
+### Decisiones tomadas
+- **Solo dominios del usuario, no la blocklist de 657k**: resolver 657k nombres via DNS tomaría más de 1 minuto y el OS mataría el proceso. La blocklist ya está cubierta por `/etc/hosts`.
+- **Flush explícito al remover**: vaciar el archivo de anchor y recargar `pf.conf` no borra las reglas en memoria. Se necesita `pfctl -a focusmode -F rules` explícitamente.
+- **Trailing newline en archivos pf**: pfctl falla con "syntax error en línea N+1" si el archivo no termina con `\n`. Se asegura newline final en anchor y en `pf.conf`.
+
+---
+
 Registro de lo que se construyó en cada paso y por qué se tomaron las decisiones clave.
 
 ---

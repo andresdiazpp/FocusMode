@@ -67,10 +67,10 @@ Cada entrada dice qué es, por qué se dejó, y dónde está en el código.
 
 ## 6. Versión del helper — detección y actualización
 
-**Qué falta:** `installHelperIfNeeded()` asume que si el helper existe, está actualizado. No hay comparación de versiones.
+**Qué falta:** `installHelperIfNeeded()` compara tamaño de archivo para detectar cambios. Funciona pero es frágil — dos versiones distintas podrían tener el mismo tamaño.
 
-**Por qué se dejó:** Funciona para desarrollo. Se necesita antes del primer release.
+**Por qué se dejó:** Para desarrollo funciona. Se necesita solución robusta antes del primer release.
 
-**Dónde:** `Data/System/HelperClient.swift` línea ~24 — comentario que dice "por ahora asumimos que está actualizado".
+**Dónde:** `Data/System/HelperClient.swift` — `installHelperIfNeeded()`.
 
-**Qué hacer:** Comparar el `CFBundleVersion` del helper instalado contra el del bundle. Si el del bundle es mayor, reinstalar.
+**Qué hacer:** Comparar `CFBundleVersion` del helper instalado contra el del bundle. Si el del bundle es mayor, reinstalar. Requiere leer el Info.plist embebido en el binario instalado.

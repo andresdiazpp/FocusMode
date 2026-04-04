@@ -14,6 +14,7 @@ App de macOS que bloquea distracciones. En desarrollo activo.
 - Clean Mode activo: 657k+ dominios de porn bloqueados en /etc/hosts en cada sesión
 - DNSManager real: cambia el DNS a CleanBrowsing (185.228.168.10) via XPC al iniciar sesión, restaura el original al terminar
 - AppMonitor real: observa lanzamientos de apps via NSWorkspace y cierra las bloqueadas al instante
+- pf firewall: bloquea los dominios del usuario a nivel de red — no se puede evadir con VPN. Persiste tras reinicios via launchd
 
 ## Arquitectura
 
