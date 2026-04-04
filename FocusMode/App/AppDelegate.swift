@@ -9,8 +9,9 @@ import ApplicationServices
 class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        // Si falta algún permiso, la pantalla de onboarding se muestra
-        // automáticamente porque PermissionsView verifica el estado al cargar.
+        // Trae la app al frente y centra la ventana al abrir
+        NSApp.activate(ignoringOtherApps: true)
+        NSApp.windows.first?.center()
     }
 
     // Verifica si la app tiene permiso de Accessibility.

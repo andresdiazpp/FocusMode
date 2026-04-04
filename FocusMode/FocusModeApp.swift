@@ -15,11 +15,8 @@ struct FocusModeApp: App {
     var body: some Scene {
         WindowGroup {
             #if DEBUG
-            // En desarrollo siempre mostramos la pantalla principal
-            // para no depender de permisos del sistema
             ContentView()
             #else
-            // En producción verificamos los permisos reales
             if AppDelegate.hasAccessibilityPermission() && AppDelegate.hasFullDiskAccess() {
                 ContentView()
             } else {
@@ -27,5 +24,7 @@ struct FocusModeApp: App {
             }
             #endif
         }
+        .defaultSize(width: 360, height: 560)
+        .windowResizability(.contentSize)
     }
 }

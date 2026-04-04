@@ -21,6 +21,7 @@ struct TimerPickerView: View {
                 Text("Hora exacta").tag(HomeViewModel.TimerInputMode.byTime)
             }
             .pickerStyle(.segmented)
+            .frame(maxWidth: .infinity)
 
             Divider()
 
@@ -86,10 +87,10 @@ struct TimerPickerView: View {
 
     // Fecha en formato ISO (año-mes-día) + hora con stepper
     private var exactTimePicker: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(spacing: 10) {
 
             // Fecha: locale sv_SE da formato YYYY-MM-DD
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(spacing: 4) {
                 Text("Fecha")
                     .font(.system(size: 11))
                     .foregroundStyle(.secondary)
@@ -101,7 +102,7 @@ struct TimerPickerView: View {
             }
 
             // Hora
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(spacing: 4) {
                 Text("Hora")
                     .font(.system(size: 11))
                     .foregroundStyle(.secondary)
@@ -111,6 +112,7 @@ struct TimerPickerView: View {
                     .labelsHidden()
             }
         }
+        .frame(maxWidth: .infinity)
     }
 }
 

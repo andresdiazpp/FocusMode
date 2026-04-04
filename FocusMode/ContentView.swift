@@ -9,7 +9,9 @@ import SwiftUI
 // Simplemente muestra HomeView — aquí no vive lógica ni estado.
 struct ContentView: View {
     var body: some View {
-        HomeView()
+        NavigationStack {
+            HomeView()
+        }
     }
 }
 
