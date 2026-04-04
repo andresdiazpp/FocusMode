@@ -4,6 +4,21 @@ Registro de lo que se construyó en cada paso y por qué se tomaron las decision
 
 ---
 
+## Paso 8.2 — BlocklistFetcher: merge de dos listas y deduplicación (2026-04-04)
+
+### Qué se construyó
+- Segunda fuente agregada: Blocklist Project (porn) — `blocklistproject.github.io/Lists/porn.txt`
+- `fetchAndMerge()`: descarga ambas fuentes en paralelo (`async let`), guarda cada caché individual, une con `Set` para deduplicar, ordena y guarda `blocklist_merged.txt`
+- `loadCached()` ahora lee `blocklist_merged.txt` (el archivo combinado)
+- Función privada `download(from:)` extrae la lógica de red para no repetirla
+
+### Decisiones tomadas
+- **Descarga en paralelo**: `async let rawA` y `async let rawB` se lanzan juntos — la espera es el máximo de los dos tiempos, no la suma
+- **`Set` para deduplicar**: forma más simple de eliminar repetidos entre dos listas; `sorted()` da orden estable para que el archivo sea comparable entre corridas
+- **Cachés individuales separadas**: se guardan `blocklist_stevenblack.txt` y `blocklist_blocklistproject.txt` además del merged — permite depurar qué vino de dónde
+
+---
+
 ## Paso 8.1 — BlocklistFetcher: descarga y persiste una blocklist (2026-04-04)
 
 ### Qué se construyó

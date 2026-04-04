@@ -1,17 +1,25 @@
 // BlocklistFetcher.swift
-// Descarga una blocklist remota, la parsea y la guarda en disco.
+// Descarga dos blocklists remotas, las parsea, las combina y guarda el resultado en disco.
 //
-// Formato de entrada: archivo hosts de StevenBlack.
-// Cada línea relevante tiene la forma: "0.0.0.0 dominio.com"
-// Las líneas que empiezan con "#" son comentarios — se ignoran.
-// El resultado es un array de strings con solo los dominios.
+// Fuentes:
+//   1. StevenBlack porn — formato hosts: "0.0.0.0 dominio.com"
+//   2. Blocklist Project porn — mismo formato
+//
+// El resultado final es la unión de ambas sin repetidos, guardada como un dominio por línea.
 
 import Foundation
 
 final class BlocklistFetcher {
 
-    // URL de la blocklist de StevenBlack (solo porn)
+    // MARK: - URLs de las dos fuentes
+
+    // StevenBlack: variante solo porn
     static let stevenBlackURL = URL(string: "https://raw.githubusercontent.com/StevenBlack/hosts/master/alternates/porn/hosts")!
+
+    // Blocklist Project: lista de pornografía
+    static let blocklistProjectURL = URL(string: "https://blocklistproject.github.io/Lists/porn.txt")!
+
+    // MARK: - Rutas en disco
 
     // Carpeta base de la app en Application Support
     private static let appSupport: URL = {
@@ -21,40 +29,62 @@ final class BlocklistFetcher {
         return folder
     }()
 
-    // Archivo donde se guarda la lista ya procesada (un dominio por línea)
-    static let cacheURL = appSupport.appendingPathComponent("blocklist_stevenblack.txt")
+    // Caché de cada fuente por separado
+    static let stevenBlackCacheURL      = appSupport.appendingPathComponent("blocklist_stevenblack.txt")
+    static let blocklistProjectCacheURL = appSupport.appendingPathComponent("blocklist_blocklistproject.txt")
 
-    // Descarga la lista, la parsea y la guarda en disco.
-    // Devuelve los dominios extraídos.
-    // Lanza error si la descarga o la escritura falla.
+    // Archivo merged: unión de las dos listas, sin repetidos
+    static let mergedCacheURL = appSupport.appendingPathComponent("blocklist_merged.txt")
+
+    // MARK: - Fetch y merge
+
+    // Descarga ambas listas en paralelo, las combina y guarda el resultado.
+    // Devuelve el array de dominios resultante (sin repetidos, ordenado).
+    // Lanza error si alguna descarga o escritura falla.
     @discardableResult
-    func fetchAndPersist() async throws -> [String] {
-        // 1. Descarga el archivo hosts crudo
-        let (data, _) = try await URLSession.shared.data(from: Self.stevenBlackURL)
+    func fetchAndMerge() async throws -> [String] {
+        // Descarga las dos fuentes al mismo tiempo (async let = paralelo)
+        async let rawA = download(from: Self.stevenBlackURL)
+        async let rawB = download(from: Self.blocklistProjectURL)
 
-        // 2. Convierte los bytes a texto
-        guard let raw = String(data: data, encoding: .utf8) else {
-            throw URLError(.cannotDecodeContentData)
-        }
+        // Espera a que ambas terminen
+        let (textA, textB) = try await (rawA, rawB)
 
-        // 3. Parsea: extrae dominios de líneas "0.0.0.0 dominio.com"
-        let domains = Self.parse(raw)
+        // Parsea cada una
+        let domainsA = Self.parse(textA)
+        let domainsB = Self.parse(textB)
 
-        // 4. Guarda un dominio por línea en disco
-        let content = domains.joined(separator: "\n")
-        try content.write(to: Self.cacheURL, atomically: true, encoding: .utf8)
+        // Guarda cada caché individual
+        try domainsA.joined(separator: "\n").write(to: Self.stevenBlackCacheURL,      atomically: true, encoding: .utf8)
+        try domainsB.joined(separator: "\n").write(to: Self.blocklistProjectCacheURL, atomically: true, encoding: .utf8)
 
-        return domains
+        // Une las dos listas: Set elimina repetidos, sorted() da orden estable
+        let merged = Array(Set(domainsA + domainsB)).sorted()
+
+        // Guarda la lista combinada
+        try merged.joined(separator: "\n").write(to: Self.mergedCacheURL, atomically: true, encoding: .utf8)
+
+        return merged
     }
 
-    // Lee la lista guardada en disco.
-    // Devuelve array vacío si no existe el archivo todavía.
+    // Lee la lista merged guardada en disco.
+    // Devuelve array vacío si el archivo no existe todavía.
     func loadCached() -> [String] {
-        guard let content = try? String(contentsOf: Self.cacheURL, encoding: .utf8) else {
+        guard let content = try? String(contentsOf: Self.mergedCacheURL, encoding: .utf8) else {
             return []
         }
-        // Parte por saltos de línea y filtra líneas vacías
         return content.split(separator: "\n", omittingEmptySubsequences: true).map(String.init)
+    }
+
+    // MARK: - Descarga
+
+    // Descarga una URL y devuelve el texto crudo.
+    private func download(from url: URL) async throws -> String {
+        let (data, _) = try await URLSession.shared.data(from: url)
+        guard let text = String(data: data, encoding: .utf8) else {
+            throw URLError(.cannotDecodeContentData)
+        }
+        return text
     }
 
     // MARK: - Parsing
