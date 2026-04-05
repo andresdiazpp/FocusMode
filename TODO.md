@@ -12,6 +12,8 @@ Cada entrada dice qué es, por qué se dejó, y dónde está en el código.
 - Arrancar sola al encender el Mac (login item via `SMAppService`)
 - Vivir en la barra de menús con un icono — sin necesidad de tener una ventana abierta
 
-**Por qué se dejó:** Requiere firma de código real (Developer ID), configurar un entitlements de login item, y cambiar la arquitectura de la ventana principal a `MenuBarExtra` o `NSStatusItem`.
+**Restricción:** Implementar sin Developer ID — solo para uso en el Mac de Andrés. No pagar los $99/año por ahora.
+
+**Por qué se dejó:** Cambiar la arquitectura de la ventana principal a `MenuBarExtra` o `NSStatusItem`, y configurar el login item via `SMAppService`.
 
 **Dónde empezar:** `FocusModeApp.swift` — cambiar `WindowGroup` por `MenuBarExtra` + agregar `SMAppService.mainApp.register()` al activar por primera vez.
